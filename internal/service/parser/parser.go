@@ -17,7 +17,7 @@ const (
 )
 
 type Semver struct {
-	major, minor, patch int32
+	major, minor, patch int
 }
 
 func (s Semver) String() string {
@@ -37,9 +37,9 @@ type dependencyParser struct {
 	packageType PackageType
 }
 
-func (d *dependencyParser) Parse(fileContent string) ([]Dependency, error) {
-	return []Dependency{{Url: "github-test", Version: Semver{1, 2, 3}}, {Url: "bitbucket-test", Version: Semver{1, 0, 1}}}, nil
-}
+// func (d *dependencyParser) Parse(fileContent string) ([]Dependency, error) {
+// 	return []Dependency{{Url: "github-test", Version: Semver{1, 2, 3}}, {Url: "bitbucket-test", Version: Semver{1, 0, 1}}}, nil
+// }
 
 func ParseProject(client *gl.Client, project *gl.Project) ([]Dependency, error) {
 	an := dependencyParser{packageType: Ansible}
@@ -61,8 +61,6 @@ func ParseProject(client *gl.Client, project *gl.Project) ([]Dependency, error) 
 	log.Println(project.Name)
 	dependencies := []Dependency{}
 	for j := 0; j < len(t); j++ {
-		log.Println(t[j].Path)
-		log.Println(url.QueryEscape(t[j].Path))
 		ptrString := func(s string) *string {
 			return &s
 		}
