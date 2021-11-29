@@ -5,10 +5,19 @@ import (
 	"dependabot/internal/service"
 	"dependabot/internal/service/parser"
 	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func Run() {
-	client := client.CreateClient("_anDFoWTfDoysp8RUfap")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error while loading environment file")
+	}
+	secretKey := os.Getenv("SECRET_KEY")
+
+	client := client.CreateClient(secretKey)
 	projects, err := service.CrawlGroup(client)
 	if err != nil {
 		log.Println("error")
