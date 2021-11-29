@@ -1,6 +1,8 @@
 package service
 
 import (
+	"dependabot/internal/service/helper"
+	"dependabot/internal/service/parser"
 	"log"
 
 	gitlab "github.com/gopaytech/go-commons/pkg/gitlab"
@@ -11,10 +13,29 @@ type group struct {
 	client *gl.Client
 }
 
-func CrawlGroup(client *gl.Client) ([]*gl.Project, error) {
-	// groupID := 3663 //roles
-	// groupID := 3725 //playbooks
-	groupID := 3262 //terraform
+func CrawlGroups(client *gl.Client) {
+	groupIDs := helper.GetGroupList()
+	for i := 0; i < len(groupIDs); i++ {
+		groupID := groupIDs[i]
+		projects, err := crawlGroup(client, groupID)
+		if err != nil {
+			log.Println("error")
+			return
+		}
+		size := len(projects)
+		for i := 0; i < size; i++ {
+			if projects[i].Name != "aws-basic-instance" {
+				continue
+			}
+			deps, _ := parser.ParseProject(client, projects[i])
+			for j := 0; j < len(deps); j++ {
+				log.Println(deps[j].Url, " ", deps[j].Version)
+			}
+		}
+	}
+}
+
+func crawlGroup(client *gl.Client, groupID int) ([]*gl.Project, error) {
 	id := gitlab.NameOrId{ID: groupID}
 
 	listOpts := gl.ListOptions{
