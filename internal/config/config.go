@@ -17,10 +17,8 @@ type Main struct {
 }
 
 type Git struct {
-	Token      string `env:"GIT_TOKEN,required"`
-	URL        string `env:"GIT_URL,required"`
-	IACGroupID int    `env:"GIT_IAC_GROUP_ID"`
-	Email      string `env:"GIT_EMAIL,required"`
+	Token string `env:"GIT_TOKEN,required"`
+	URL   string `env:"GIT_URL,required"`
 }
 
 type Database struct {

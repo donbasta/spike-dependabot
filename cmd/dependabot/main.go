@@ -2,22 +2,14 @@ package dependabot
 
 import (
 	"dependabot/internal/client"
+	"dependabot/internal/config"
 	"dependabot/internal/service"
-	"log"
-	"os"
-
-	"github.com/joho/godotenv"
 )
 
 func Run() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error while loading environment file")
-	}
+	mainConfig := config.ProvideConfig()
 
-	secretKey := os.Getenv("SECRET_KEY")
-
-	client := client.CreateClient(secretKey)
+	client := client.CreateClient(mainConfig.Git.Token)
 
 	service.CrawlGroups(client)
 }
