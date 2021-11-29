@@ -10,6 +10,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.6.8 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/sethvargo/go-envconfig v0.4.0
 	github.com/xanzy/go-gitlab v0.51.1 // indirect
 	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023 // indirect
 	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f // indirect
