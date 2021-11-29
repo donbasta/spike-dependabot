@@ -16,7 +16,7 @@ func Run() {
 	}
 	size := len(projects)
 	for i := 0; i < size; i++ {
-		if projects[i].Name != "rabbitmq-playbook" {
+		if projects[i].Name != "aws-basic-instance" {
 			continue
 		}
 		deps, _ := parser.ParseProject(client, projects[i])

@@ -42,7 +42,7 @@ type dependencyParser struct {
 // }
 
 func ParseProject(client *gl.Client, project *gl.Project) ([]Dependency, error) {
-	an := dependencyParser{packageType: Ansible}
+	// an := dependencyParser{packageType: Ansible}
 	tf := dependencyParser{packageType: Terraform}
 
 	listOpt := gl.ListOptions{
@@ -68,12 +68,19 @@ func ParseProject(client *gl.Client, project *gl.Project) ([]Dependency, error) 
 			Ref: ptrString("master"),
 		}
 		file, _, _ := client.RepositoryFiles.GetFile(id, url.QueryEscape(t[j].Path), fileOptions)
-		if t[j].Name == "requirements.yml" {
+		// if t[j].Name == "requirements.yml" {
+		// 	content, _ := base64.StdEncoding.DecodeString(file.Content)
+		// 	dep, _ := an.Parse(string(content))
+		// 	dependencies = append(dependencies, dep...)
+		// } else if t[j].Name == "main.tf" {
+		// 	content, _ := base64.StdEncoding.DecodeString(file.Content)
+		// 	dep, _ := tf.Parse(string(content))
+		// 	dependencies = append(dependencies, dep...)
+		// }
+		if t[j].Name == "main.tf" {
+			log.Println("found file main.tf here!")
 			content, _ := base64.StdEncoding.DecodeString(file.Content)
-			dep, _ := an.Parse(string(content))
-			dependencies = append(dependencies, dep...)
-		} else if t[j].Name == "main.tf" {
-			content, _ := base64.StdEncoding.DecodeString(file.Content)
+			// log.Println(string(content))
 			dep, _ := tf.Parse(string(content))
 			dependencies = append(dependencies, dep...)
 		}

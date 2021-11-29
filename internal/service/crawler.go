@@ -13,7 +13,8 @@ type group struct {
 
 func CrawlGroup(client *gl.Client) ([]*gl.Project, error) {
 	// groupID := 3663 //roles
-	groupID := 3725 //playbooks
+	// groupID := 3725 //playbooks
+	groupID := 3262 //terraform
 	id := gitlab.NameOrId{ID: groupID}
 
 	listOpts := gl.ListOptions{
