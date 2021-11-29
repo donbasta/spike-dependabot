@@ -2,7 +2,6 @@ package service
 
 import (
 	"dependabot/internal/service/helper"
-	"dependabot/internal/service/parser"
 	"log"
 
 	gitlab "github.com/gopaytech/go-commons/pkg/gitlab"
@@ -23,7 +22,7 @@ func CrawlGroups(client *gl.Client) {
 		}
 		size := len(projects)
 		for i := 0; i < size; i++ {
-			deps, _ := parser.ParseProject(client, projects[i])
+			deps, _ := ParseProject(client, projects[i])
 			for j := 0; j < len(deps); j++ {
 				log.Println(deps[j].Url, " ", deps[j].Version)
 			}

@@ -1,8 +1,6 @@
 package parser
 
-import (
-	"strings"
-)
+import "strings"
 
 type InvalidSourceError struct {
 	msg string
@@ -35,7 +33,7 @@ func parseSource(source string) (Dependency, error) {
 	return ret, nil
 }
 
-func (d *dependencyParser) Parse(fileContent string) ([]Dependency, error) {
+func (tf *TerraformParser) Parse(fileContent string) ([]Dependency, error) {
 	lines := strings.Split(fileContent, "\n")
 	deps := []Dependency{}
 	isModule := false
