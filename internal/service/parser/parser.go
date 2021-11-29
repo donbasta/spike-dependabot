@@ -4,7 +4,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
-	"net/url"
+	"strconv"
+	"strings"
 
 	gl "github.com/xanzy/go-gitlab"
 )
@@ -18,6 +19,16 @@ const (
 
 type Semver struct {
 	major, minor, patch int
+}
+
+func MakeVersion(semver string) Semver {
+	semver = strings.Trim(semver, " ")
+	semverTrimV := semver[1:]
+	nums := strings.Split(semverTrimV, ".")
+	major, _ := strconv.Atoi(nums[0])
+	minor, _ := strconv.Atoi(nums[1])
+	patch, _ := strconv.Atoi(nums[2])
+	return Semver{major, minor, patch}
 }
 
 func (s Semver) String() string {
@@ -36,10 +47,6 @@ type DependencyParser interface {
 type dependencyParser struct {
 	packageType PackageType
 }
-
-// func (d *dependencyParser) Parse(fileContent string) ([]Dependency, error) {
-// 	return []Dependency{{Url: "github-test", Version: Semver{1, 2, 3}}, {Url: "bitbucket-test", Version: Semver{1, 0, 1}}}, nil
-// }
 
 func ParseProject(client *gl.Client, project *gl.Project) ([]Dependency, error) {
 	// an := dependencyParser{packageType: Ansible}
@@ -67,7 +74,7 @@ func ParseProject(client *gl.Client, project *gl.Project) ([]Dependency, error) 
 		fileOptions := &gl.GetFileOptions{
 			Ref: ptrString("master"),
 		}
-		file, _, _ := client.RepositoryFiles.GetFile(id, url.QueryEscape(t[j].Path), fileOptions)
+		file, _, _ := client.RepositoryFiles.GetFile(id, t[j].Path, fileOptions)
 		// if t[j].Name == "requirements.yml" {
 		// 	content, _ := base64.StdEncoding.DecodeString(file.Content)
 		// 	dep, _ := an.Parse(string(content))
@@ -77,10 +84,11 @@ func ParseProject(client *gl.Client, project *gl.Project) ([]Dependency, error) 
 		// 	dep, _ := tf.Parse(string(content))
 		// 	dependencies = append(dependencies, dep...)
 		// }
-		if t[j].Name == "main.tf" {
-			log.Println("found file main.tf here!")
-			content, _ := base64.StdEncoding.DecodeString(file.Content)
-			// log.Println(string(content))
+		if t[j].Name == "main.tf" && t[j].Path == "main.tf" {
+			content, err := base64.StdEncoding.DecodeString(file.Content)
+			if err != nil {
+				log.Fatal(err)
+			}
 			dep, _ := tf.Parse(string(content))
 			dependencies = append(dependencies, dep...)
 		}

@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"log"
 	"strings"
 )
 
@@ -30,7 +29,6 @@ func parseSource(source string) (Dependency, error) {
 	if err != nil {
 		return ret, err
 	}
-	log.Println(url)
 	tokens := strings.Split(url, "?")
 	ret.Url = tokens[0]
 	ret.Version = MakeVersion(tokens[1][4:])
@@ -53,10 +51,6 @@ func (d *dependencyParser) Parse(fileContent string) ([]Dependency, error) {
 		}
 		attr := tokens[0]
 		if isModule && (attr == "source") {
-			log.Println(tokens[0])
-			log.Println(tokens[1])
-			log.Println(tokens[2])
-			log.Println(strings.Trim(tokens[2], "\""))
 			buffer, err := parseSource(strings.Trim(tokens[2], "\""))
 			if err != nil {
 				return []Dependency{}, err

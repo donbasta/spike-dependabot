@@ -1,20 +1,5 @@
 package parser
 
-import (
-	"strconv"
-	"strings"
-)
-
-func MakeVersion(semver string) Semver {
-	semver = strings.Trim(semver, " ")
-	semverTrimV := semver[1:]
-	nums := strings.Split(semverTrimV, ".")
-	major, _ := strconv.Atoi(nums[0])
-	minor, _ := strconv.Atoi(nums[1])
-	patch, _ := strconv.Atoi(nums[2])
-	return Semver{major, minor, patch}
-}
-
 // func (d *dependencyParser) Parse(fileContent string) ([]Dependency, error) {
 // 	lines := strings.Split(fileContent, "\n")
 // 	deps := []Dependency{}

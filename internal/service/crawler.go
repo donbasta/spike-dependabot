@@ -19,14 +19,10 @@ func CrawlGroups(client *gl.Client) {
 		groupID := groupIDs[i]
 		projects, err := crawlGroup(client, groupID)
 		if err != nil {
-			log.Println("error")
 			return
 		}
 		size := len(projects)
 		for i := 0; i < size; i++ {
-			if projects[i].Name != "aws-basic-instance" {
-				continue
-			}
 			deps, _ := parser.ParseProject(client, projects[i])
 			for j := 0; j < len(deps); j++ {
 				log.Println(deps[j].Url, " ", deps[j].Version)
@@ -45,7 +41,6 @@ func crawlGroup(client *gl.Client, groupID int) ([]*gl.Project, error) {
 
 	opts := &gl.ListGroupProjectsOptions{IncludeSubgroups: gl.Bool(true), ListOptions: listOpts}
 	hehe := &group{client: client}
-	result, response, _ := hehe.client.Groups.ListGroupProjects(id.Get(), opts)
-	log.Println(response)
+	result, _, _ := hehe.client.Groups.ListGroupProjects(id.Get(), opts)
 	return result, nil
 }
