@@ -29,7 +29,11 @@ func parseSource(source string) (Dependency, error) {
 	}
 	tokens := strings.Split(url, "?")
 	ret.Url = tokens[0]
-	ret.Version = MakeVersion(tokens[1][4:])
+	if len(tokens) == 1 {
+		ret.Version = MakeVersion("v0.0.0")
+	} else {
+		ret.Version = MakeVersion(tokens[1][4:])
+	}
 	return ret, nil
 }
 
@@ -38,11 +42,10 @@ func (tf *TerraformParser) Parse(fileContent string) ([]Dependency, error) {
 	deps := []Dependency{}
 	isModule := false
 	for i := 0; i < len(lines); i++ {
-		if len(lines[i]) == 0 {
+		tmpLine := strings.Trim(lines[i], " ")
+		if len(tmpLine) == 0 {
 			continue
 		}
-		tmpLine := lines[i]
-		tmpLine = strings.Trim(tmpLine, " ")
 		tokens := strings.Fields(tmpLine)
 		if tokens[0] == "module" {
 			isModule = true
