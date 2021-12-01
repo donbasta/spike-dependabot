@@ -1,29 +1,39 @@
 package parser
 
-import "strings"
+import (
+	"log"
+	"regexp"
+
+	"gopkg.in/yaml.v2"
+)
+
+type AnsibleDependency struct {
+	Name    string `yaml:"name,omitempty"`
+	Src     string `yaml:"src,omitempty"`
+	Version string `yaml:"version,omitempty"`
+	Scm     string `yaml:"scm,omitempty"`
+}
 
 func (an *AnsibleParser) Parse(fileContent string) ([]Dependency, error) {
-	lines := strings.Split(fileContent, "\n")
+	byteContent := []byte(fileContent)
+
+	var d []AnsibleDependency
+	yaml.Unmarshal(byteContent, &d)
+
 	deps := []Dependency{}
-	buffer := Dependency{}
-	for i := 1; i < len(lines); i++ {
-		if len(lines[i]) == 0 {
-			continue
+
+	reVersion, _ := regexp.Compile(`^v\d*\.\d*\.\d*$`)
+
+	for i := 0; i < len(d); i++ {
+		log.Println(d[i])
+		version := d[i].Version
+		matched := reVersion.MatchString("aaxbb")
+		if !matched {
+			//TODO: should change to latest
+			version = "v0.0.0"
 		}
-		tmpLine := lines[i]
-		if lines[i][0] == '-' {
-			buffer = Dependency{}
-			tmpLine = tmpLine[1:]
-		}
-		tmpLine = strings.Trim(tmpLine, " ")
-		tokens := strings.Split(tmpLine, ":")
-		attr := tokens[0]
-		if attr == "src" {
-			buffer.Url = tokens[1]
-		} else if attr == "version" {
-			buffer.Version = MakeVersion(tokens[1])
-			deps = append(deps, buffer)
-		}
+		deps = append(deps, Dependency{Url: d[i].Src, Version: MakeVersion(version)})
 	}
+
 	return deps, nil
 }
