@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"log"
 	"regexp"
+	"strings"
 
 	"gopkg.in/yaml.v2"
 )
@@ -25,14 +25,21 @@ func (an *AnsibleParser) Parse(fileContent string) ([]Dependency, error) {
 	reVersion, _ := regexp.Compile(`^v\d*\.\d*\.\d*$`)
 
 	for i := 0; i < len(d); i++ {
-		log.Println(d[i])
 		version := d[i].Version
-		matched := reVersion.MatchString("aaxbb")
+		matched := reVersion.MatchString(version)
 		if !matched {
-			//TODO: should change to latest
+			//TODO: should change to latest or default handling when src is absent
 			version = "v0.0.0"
 		}
-		deps = append(deps, Dependency{Url: d[i].Src, Version: MakeVersion(version)})
+		url := d[i].Src
+		if len(url) > 4 && url[:4] == "git@" {
+			url = url[4:]
+			url = strings.Replace(url, ":", "/", 1)
+		}
+		if len(url) > 4 && url[len(url)-4:] == ".git" {
+			url = url[:len(url)-4]
+		}
+		deps = append(deps, Dependency{Url: url, Version: MakeVersion(version)})
 	}
 
 	return deps, nil

@@ -28,7 +28,11 @@ func parseSource(source string) (Dependency, error) {
 		return ret, err
 	}
 	tokens := strings.Split(url, "?")
-	ret.Url = tokens[0]
+	u := tokens[0]
+	if len(u) > 4 && u[len(u)-4:] == ".git" {
+		u = u[:len(u)-4]
+	}
+	ret.Url = u
 	if len(tokens) == 1 {
 		ret.Version = MakeVersion("v0.0.0")
 	} else {
