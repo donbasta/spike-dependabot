@@ -35,7 +35,7 @@ func ParseProject(client *gl.Client, project *gl.Project) ([]parser.Dependency, 
 			Ref: ptrString("master"),
 		}
 		file, _, _ := client.RepositoryFiles.GetFile(id, t[j].Path, fileOptions)
-		if t[j].Name == "requirements.yml" && t[j].Path == "requirements.yml" {
+		if t[j].Name == "requirements.yml" || t[j].Name == "playbooks.yml" || t[j].Name == "playbooks.yml.tmpl" {
 			content, err := base64.StdEncoding.DecodeString(file.Content)
 			if err != nil {
 				log.Fatal(err)
@@ -43,7 +43,7 @@ func ParseProject(client *gl.Client, project *gl.Project) ([]parser.Dependency, 
 			dep, _ := an.Parse(string(content))
 			dependencies = append(dependencies, dep...)
 		}
-		if t[j].Name == "main.tf" && t[j].Path == "main.tf" {
+		if (t[j].Name == "main.tf" || t[j].Name == "main.tf.tmpl") && (t[j].Path != "examples/main.tf") {
 			content, err := base64.StdEncoding.DecodeString(file.Content)
 			if err != nil {
 				log.Fatal(err)

@@ -23,8 +23,6 @@ func CheckDependency(client *gl.Client, projects []Project) {
 	c := cache.ProvideCache()
 
 	for i := 0; i < len(projects); i++ {
-		log.Printf("Project name: %s", projects[i].project.Name)
-		log.Printf("Project dependencies: %s", projects[i].dependencies)
 		dep := projects[i].dependencies
 		for j := 0; j < len(dep); j++ {
 			source := getSourceTypeFromURL(dep[j].Url)
@@ -45,11 +43,9 @@ func CheckDependency(client *gl.Client, projects []Project) {
 				hehe := &group{client: client}
 				id := gitlab.NewNameWithBaseUrl(dep[j].Url, "source.golabs.io")
 				tags, _, _ := hehe.client.Tags.ListTags(id.Get(), opts)
+				//TODO: get latest tags from list of tags
 				if len(tags) > 0 {
 					c.Set(dep[j].Url, tags[0].Name, 0)
-				}
-				for k := 0; k < len(tags); k++ {
-					log.Println(tags[k].Name)
 				}
 			}
 		}
