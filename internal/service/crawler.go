@@ -2,7 +2,6 @@ package service
 
 import (
 	"dependabot/internal/service/helper"
-	"log"
 
 	gitlab "github.com/gopaytech/go-commons/pkg/gitlab"
 	gl "github.com/xanzy/go-gitlab"
@@ -12,22 +11,32 @@ type group struct {
 	client *gl.Client
 }
 
-func CrawlGroups(client *gl.Client) {
+type empty struct{}
+
+func CrawlGroups(client *gl.Client) ([]Project, error) {
+	watchedProjects := []Project{}
 	groupIDs := helper.GetGroupList()
 	for i := 0; i < len(groupIDs); i++ {
 		groupID := groupIDs[i]
 		projects, err := crawlGroup(client, groupID)
 		if err != nil {
-			return
+			return nil, err
 		}
 		size := len(projects)
-		for i := 0; i < size; i++ {
-			deps, _ := ParseProject(client, projects[i])
-			for j := 0; j < len(deps); j++ {
-				log.Println(deps[j].Url, " ", deps[j].Version)
-			}
+
+		sem := make(chan empty, size)
+		for j := 0; j < size; j++ {
+			go func(p *gl.Project) {
+				deps, _ := ParseProject(client, p)
+				watchedProjects = append(watchedProjects, Project{p, deps})
+				sem <- empty{}
+			}(projects[j])
+		}
+		for j := 0; j < size; j++ {
+			<-sem
 		}
 	}
+	return watchedProjects, nil
 }
 
 func crawlGroup(client *gl.Client, groupID int) ([]*gl.Project, error) {
