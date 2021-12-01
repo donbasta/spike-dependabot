@@ -24,5 +24,9 @@ func Run() {
 
 	client := client.CreateClient(mainConfig.Git.Token)
 
-	service.CrawlGroups(client)
+	projects, err := service.CrawlGroups(client)
+	if err != nil {
+		log.Fatal(err)
+	}
+	service.CheckDependency(client, projects)
 }
