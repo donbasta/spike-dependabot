@@ -2,7 +2,6 @@ package service
 
 import (
 	"dependabot/internal/cache"
-	"log"
 	"strings"
 
 	gitlab "github.com/gopaytech/go-commons/pkg/gitlab"
@@ -19,12 +18,25 @@ func getSourceTypeFromURL(url string) string {
 	return ""
 }
 
-func CheckDependency(client *gl.Client, projects []Project) {
+type DependencyChange struct {
+	source   string
+	old, new string
+}
+
+type Changes struct {
+	project    *gl.Project
+	DepChanges []DependencyChange
+}
+
+func CheckDependency(client *gl.Client, projects []Project) []Changes {
 	c := cache.ProvideCache()
+	ret := []Changes{}
 
 	for i := 0; i < len(projects); i++ {
 		dep := projects[i].dependencies
+		tmp := Changes{project: projects[i].project, DepChanges: []DependencyChange{}}
 		for j := 0; j < len(dep); j++ {
+			newVersion := ""
 			source := getSourceTypeFromURL(dep[j].Url)
 			if source == "" {
 				continue
@@ -37,21 +49,25 @@ func CheckDependency(client *gl.Client, projects []Project) {
 
 			if source == "golabs" {
 				if val, found := c.Get(dep[j].Url); found {
-					log.Printf("got from cache for url %s: version = %s\n", dep[j].Url, val.(string))
-					continue
-				}
-
-				opts := &gl.ListReleasesOptions{}
-				hehe := &group{client: client}
-				id := gitlab.NewNameWithBaseUrl(dep[j].Url, "source.golabs.io")
-				releases, _, _ := hehe.client.Releases.ListReleases(id.Get(), opts)
-				if len(releases) > 0 {
-					c.Set(dep[j].Url, releases[0].TagName, 0)
-				}
-				for k := 0; k < len(releases); k++ {
-					log.Printf("%s %s %s", releases[k].TagName, releases[k].Name, releases[k].ReleasedAt)
+					newVersion = val.(string)
+				} else {
+					opts := &gl.ListReleasesOptions{}
+					hehe := &group{client: client}
+					id := gitlab.NewNameWithBaseUrl(dep[j].Url, "source.golabs.io")
+					releases, _, _ := hehe.client.Releases.ListReleases(id.Get(), opts)
+					if len(releases) > 0 {
+						newVersion = releases[0].TagName
+						c.Set(dep[j].Url, newVersion, 0)
+					}
 				}
 			}
+
+			if newVersion != "" {
+				tmp.DepChanges = append(tmp.DepChanges, DependencyChange{source: dep[j].Url, old: dep[j].Version.String(), new: newVersion})
+			}
 		}
+		ret = append(ret, tmp)
 	}
+
+	return ret
 }
