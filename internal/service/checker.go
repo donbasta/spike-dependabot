@@ -29,23 +29,27 @@ func CheckDependency(client *gl.Client, projects []Project) {
 			if source == "" {
 				continue
 			}
+
 			if source == "github" {
 				//TODO: fetch version from github
 				continue
 			}
+
 			if source == "golabs" {
 				if val, found := c.Get(dep[j].Url); found {
 					log.Printf("got from cache for url %s: version = %s\n", dep[j].Url, val.(string))
 					continue
 				}
 
-				opts := &gl.ListTagsOptions{}
+				opts := &gl.ListReleasesOptions{}
 				hehe := &group{client: client}
 				id := gitlab.NewNameWithBaseUrl(dep[j].Url, "source.golabs.io")
-				tags, _, _ := hehe.client.Tags.ListTags(id.Get(), opts)
-				//TODO: get latest tags from list of tags
-				if len(tags) > 0 {
-					c.Set(dep[j].Url, tags[0].Name, 0)
+				releases, _, _ := hehe.client.Releases.ListReleases(id.Get(), opts)
+				if len(releases) > 0 {
+					c.Set(dep[j].Url, releases[0].TagName, 0)
+				}
+				for k := 0; k < len(releases); k++ {
+					log.Printf("%s %s %s", releases[k].TagName, releases[k].Name, releases[k].ReleasedAt)
 				}
 			}
 		}
