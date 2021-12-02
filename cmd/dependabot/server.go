@@ -2,8 +2,7 @@ package dependabot
 
 import (
 	"dependabot/internal/config"
-	"dependabot/internal/service"
-	"log"
+	"dependabot/internal/task"
 
 	"github.com/spf13/cobra"
 )
@@ -14,21 +13,11 @@ func NewServerCommand(
 	cfg *config.Main,
 ) ServerCommand {
 	command := &cobra.Command{
-		Use:   "server",
+		Use:   "task",
 		Short: "Run the server",
 		Long:  "Run the server",
 		Run: func(c *cobra.Command, args []string) {
-			client, err := config.ProvideGitlabClient(cfg)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			projects, err := service.CrawlGroups(client)
-			if err != nil {
-				log.Fatal(err)
-			}
-			changes := service.CheckDependency(client, projects)
-			service.UpdateProjects(changes)
+			task.Run(cfg)
 		},
 	}
 
