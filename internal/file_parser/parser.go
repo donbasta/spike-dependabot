@@ -32,9 +32,3 @@ type Dependency struct {
 type DependencyParser interface {
 	Parse(fileContent string) ([]Dependency, error)
 }
-
-type AnsibleParser struct {
-}
-
-type TerraformParser struct {
-}

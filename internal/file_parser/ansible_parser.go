@@ -7,6 +7,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+type AnsibleParser struct {
+}
+
 type AnsibleDependency struct {
 	Name    string `yaml:"name,omitempty"`
 	Src     string `yaml:"src,omitempty"`

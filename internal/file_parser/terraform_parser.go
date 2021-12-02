@@ -2,6 +2,9 @@ package parser
 
 import "strings"
 
+type TerraformParser struct {
+}
+
 type InvalidSourceError struct {
 	msg string
 }
