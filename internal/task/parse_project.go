@@ -1,7 +1,7 @@
-package service
+package task
 
 import (
-	"dependabot/internal/service/parser"
+	parser "dependabot/internal/file_parser"
 	"encoding/base64"
 	"log"
 
@@ -23,19 +23,21 @@ func ParseProject(client *gl.Client, project *gl.Project) ([]parser.Dependency, 
 
 	opt := &gl.ListTreeOptions{ListOptions: listOpt, Recursive: newTrue(true)}
 	id := project.ID
-	t, _, _ := client.Repositories.ListTree(id, opt)
+	tree, _, _ := client.Repositories.ListTree(id, opt)
 
 	log.Println(project.Name)
 	dependencies := []parser.Dependency{}
-	for j := 0; j < len(t); j++ {
+	for j := 0; j < len(tree); j++ {
 		ptrString := func(s string) *string {
 			return &s
 		}
 		fileOptions := &gl.GetFileOptions{
 			Ref: ptrString("master"),
 		}
-		file, _, _ := client.RepositoryFiles.GetFile(id, t[j].Path, fileOptions)
-		if t[j].Name == "requirements.yml" || t[j].Name == "playbooks.yml" || t[j].Name == "playbooks.yml.tmpl" {
+		file, _, _ := client.RepositoryFiles.GetFile(id, tree[j].Path, fileOptions)
+		fileName := tree[j].Name
+		filePath := tree[j].Path
+		if fileName == "requirements.yml" || fileName == "playbooks.yml" || fileName == "playbooks.yml.tmpl" {
 			content, err := base64.StdEncoding.DecodeString(file.Content)
 			if err != nil {
 				log.Fatal(err)
@@ -43,7 +45,7 @@ func ParseProject(client *gl.Client, project *gl.Project) ([]parser.Dependency, 
 			dep, _ := an.Parse(string(content))
 			dependencies = append(dependencies, dep...)
 		}
-		if (t[j].Name == "main.tf" || t[j].Name == "main.tf.tmpl") && (t[j].Path != "examples/main.tf") {
+		if (fileName == "main.tf" || fileName == "main.tf.tmpl") && (filePath != "examples/main.tf") {
 			content, err := base64.StdEncoding.DecodeString(file.Content)
 			if err != nil {
 				log.Fatal(err)

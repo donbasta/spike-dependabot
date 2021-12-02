@@ -1,4 +1,4 @@
-package service
+package task
 
 import (
 	"dependabot/internal/cache"
@@ -62,7 +62,7 @@ func CheckDependency(client *gl.Client, projects []Project) []Changes {
 				}
 			}
 
-			if newVersion != "" {
+			if newVersion != "" && newVersion != dep[j].Version.String() {
 				tmp.DepChanges = append(tmp.DepChanges, DependencyChange{source: dep[j].Url, old: dep[j].Version.String(), new: newVersion})
 			}
 		}

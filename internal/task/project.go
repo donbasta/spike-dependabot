@@ -1,7 +1,7 @@
-package service
+package task
 
 import (
-	"dependabot/internal/service/parser"
+	parser "dependabot/internal/file_parser"
 
 	gl "github.com/xanzy/go-gitlab"
 )
