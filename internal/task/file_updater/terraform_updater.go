@@ -1,18 +1,15 @@
 package updater
 
 import (
-	gl "github.com/xanzy/go-gitlab"
+	gitTransport "github.com/go-git/go-git/v5/plumbing/transport"
+	"github.com/gopaytech/go-commons/pkg/git"
 )
 
-func terraformDependencyFile(file *gl.TreeNode) bool {
-	fileName := file.Name
-	filePath := file.Path
-	return (fileName == "main.tf" || fileName == "main.tf.tmpl") && (filePath != "examples/main.tf")
-}
-
 type TerraformUpdater struct {
+	GitCloneFunc git.CloneFunc
+	GitAuth      gitTransport.AuthMethod
 }
 
-func (t *TerraformUpdater) Update(fileChanges *Changes) error {
+func (t *TerraformUpdater) UpdateDependency(c *Changes) error {
 	return nil
 }

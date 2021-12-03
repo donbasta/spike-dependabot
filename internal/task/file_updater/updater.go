@@ -5,7 +5,8 @@ import (
 )
 
 type Updater interface {
-	Update(fileChanges *Changes) error
+	UpdateDependency(fileChanges *Changes) error
+	SubmitMergeRequest() error
 }
 
 type DependencyChange struct {

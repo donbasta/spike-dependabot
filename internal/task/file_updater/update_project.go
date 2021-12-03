@@ -14,13 +14,19 @@ func UpdateProjects(changes []Changes) {
 		GitCloneFunc: git.Clone,
 		GitAuth:      authMethod,
 	}
+	terraformUpdater := &TerraformUpdater{
+		GitCloneFunc: git.Clone,
+		GitAuth:      authMethod,
+	}
 
 	for i := 0; i < len(changes); i++ {
-		if changes[i].Project.Name == "rabbitmq" {
-			err := ansibleUpdater.Update(&changes[i])
-			if err != nil {
-				log.Fatal(err)
-			}
+		err := ansibleUpdater.UpdateDependency(&changes[i])
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = terraformUpdater.UpdateDependency(&changes[i])
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 }
