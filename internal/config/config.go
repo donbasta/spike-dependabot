@@ -17,8 +17,10 @@ type Main struct {
 }
 
 type Git struct {
-	Token string `env:"GIT_TOKEN,required"`
-	URL   string `env:"GIT_URL,required"`
+	Token    string `env:"GIT_TOKEN,required"`
+	URL      string `env:"GIT_URL,required"`
+	Username string `env:"GIT_USERNAME,required"`
+	Email    string `env:"GIT_EMAIL,required"`
 }
 
 type Database struct {
