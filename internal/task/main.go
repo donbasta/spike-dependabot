@@ -2,6 +2,7 @@ package task
 
 import (
 	"dependabot/internal/config"
+	updater "dependabot/internal/task/file_updater"
 	"log"
 )
 
@@ -16,5 +17,5 @@ func Run(cfg *config.Main) {
 		log.Fatal(err)
 	}
 	changes := CheckDependency(client, projects)
-	UpdateProjects(changes)
+	updater.UpdateProjects(changes)
 }

@@ -2,6 +2,7 @@ package task
 
 import (
 	checker "dependabot/internal/dependency_checker"
+	updater "dependabot/internal/task/file_updater"
 	"strings"
 
 	gl "github.com/xanzy/go-gitlab"
@@ -17,24 +18,14 @@ func getSourceTypeFromURL(url string) string {
 	return ""
 }
 
-type DependencyChange struct {
-	source   string
-	old, new string
-}
-
-type Changes struct {
-	project    *gl.Project
-	DepChanges []DependencyChange
-}
-
-func CheckDependency(client *gl.Client, projects []Project) []Changes {
-	ret := []Changes{}
+func CheckDependency(client *gl.Client, projects []Project) []updater.Changes {
+	ret := []updater.Changes{}
 
 	gitlabClient := &checker.GitlabDependencyChecker{Client: client}
 	githubClient := &checker.GithubDependencyChecker{}
 
 	for _, p := range projects {
-		tmp := Changes{project: p.project, DepChanges: []DependencyChange{}}
+		tmp := updater.Changes{Project: p.project, DepChanges: []updater.DependencyChange{}}
 		for _, dependency := range p.dependencies {
 			newVersion := ""
 			source := getSourceTypeFromURL(dependency.Url)
@@ -51,7 +42,7 @@ func CheckDependency(client *gl.Client, projects []Project) []Changes {
 			}
 
 			if newVersion != "" && newVersion != dependency.Version.String() {
-				tmp.DepChanges = append(tmp.DepChanges, DependencyChange{source: dependency.Url, old: dependency.Version.String(), new: newVersion})
+				tmp.DepChanges = append(tmp.DepChanges, updater.DependencyChange{Source: dependency.Url, Old: dependency.Version.String(), New: newVersion})
 			}
 		}
 
