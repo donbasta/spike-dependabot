@@ -1,10 +1,9 @@
 package task
 
 import (
-	"dependabot/internal/cache"
+	checker "dependabot/internal/dependency_checker"
 	"strings"
 
-	gitlab "github.com/gopaytech/go-commons/pkg/gitlab"
 	gl "github.com/xanzy/go-gitlab"
 )
 
@@ -29,43 +28,33 @@ type Changes struct {
 }
 
 func CheckDependency(client *gl.Client, projects []Project) []Changes {
-	c := cache.ProvideCache()
 	ret := []Changes{}
 
-	for i := 0; i < len(projects); i++ {
-		dep := projects[i].dependencies
-		tmp := Changes{project: projects[i].project, DepChanges: []DependencyChange{}}
-		for j := 0; j < len(dep); j++ {
+	gitlabClient := &checker.GitlabDependencyChecker{Client: client}
+	githubClient := &checker.GithubDependencyChecker{}
+
+	for _, p := range projects {
+		tmp := Changes{project: p.project, DepChanges: []DependencyChange{}}
+		for _, dependency := range p.dependencies {
 			newVersion := ""
-			source := getSourceTypeFromURL(dep[j].Url)
+			source := getSourceTypeFromURL(dependency.Url)
 			if source == "" {
 				continue
 			}
 
 			if source == "github" {
-				//TODO: fetch version from github
-				continue
+				newVersion = githubClient.Check(&dependency)
 			}
 
 			if source == "golabs" {
-				if val, found := c.Get(dep[j].Url); found {
-					newVersion = val.(string)
-				} else {
-					opts := &gl.ListReleasesOptions{}
-					hehe := &group{client: client}
-					id := gitlab.NewNameWithBaseUrl(dep[j].Url, "source.golabs.io")
-					releases, _, _ := hehe.client.Releases.ListReleases(id.Get(), opts)
-					if len(releases) > 0 {
-						newVersion = releases[0].TagName
-						c.Set(dep[j].Url, newVersion, 0)
-					}
-				}
+				newVersion = gitlabClient.Check(&dependency)
 			}
 
-			if newVersion != "" && newVersion != dep[j].Version.String() {
-				tmp.DepChanges = append(tmp.DepChanges, DependencyChange{source: dep[j].Url, old: dep[j].Version.String(), new: newVersion})
+			if newVersion != "" && newVersion != dependency.Version.String() {
+				tmp.DepChanges = append(tmp.DepChanges, DependencyChange{source: dependency.Url, old: dependency.Version.String(), new: newVersion})
 			}
 		}
+
 		ret = append(ret, tmp)
 	}
 
