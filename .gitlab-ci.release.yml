@@ -1,0 +1,24 @@
+include:
+  - project: "gopay_infra/docker/cx-releaser"
+    ref: v1.2.4
+    file: "/templates/.semantic-release-ci.yml"
+
+stages:
+  - pre-release
+  - release
+
+pre-release:
+  stage: pre-release
+  extends: .semantic-release-pre-release
+  only:
+    - master
+  tags:
+    - i-go-gp-docker
+
+release:
+  stage: release
+  extends: .semantic-release-release
+  only:
+    - master
+  tags:
+    - i-go-gp-docker
