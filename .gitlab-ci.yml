@@ -8,12 +8,39 @@ variables:
   CX_RELEASER_VERSION: latest
 
 stages:
+  - unit-test
   - pre-release
   - release
+
+unit-test:
+  image: golang:1.16
+  services:
+    - postgres:12.2-alpine
+  variables:
+    GOPRIVATE: source.golabs.io
+    POSTGRES_DB: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+  stage: unit-test
+  before_script:
+    - echo $GITCONFIG | base64 --decode > ~/.gitconfig
+  script:
+    - cp .env.itest .env
+    - make dev-install
+    - make migrate
+    - make test
+    - make itest
+  artifacts:
+    reports:
+      cobertura: coverage/coverage.xml
+  tags:
+    - i-go-gp-docker
 
 pre-release:
   stage: pre-release
   extends: .semantic-release-pre-release
+  needs:
+    - unit-test
   only:
     - master
   tags:
