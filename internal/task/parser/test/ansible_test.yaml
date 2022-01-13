@@ -1,0 +1,15 @@
+- src: https://source.golabs.io/gopay_infra/ansible/playbooks/basic-instance-playbook.git
+  version: v1.2.0
+  name: basic-instance-playbook
+
+- src: https://source.golabs.io/gopay_infra/ansible/playbooks/rabbitmq-playbook.git
+  version: v1.0.6
+  name: rabbitmq-playbook
+
+- name: rabbitmq
+  src: git@source.golabs.io:farras.f.interns/rabbitmq-role.git
+  scm: git
+  version: v2.0.0
+
+- name: rabbitmq-exporter
+  src: git@source.golabs.io:farras.f.interns/rabbitmq-exporter.git
