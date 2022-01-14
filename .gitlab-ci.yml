@@ -93,7 +93,7 @@ stg:deploy:
   script:
     - gopay-cd render scp-dependency-manager
       --dest-cluster staging-gopay-systems-01
-      --namespace scp
+      --namespace scp-dependency-manager
       --team-name gopay-systems
       --chart-name chartmuseum-incubator/gopay-cron
       --chart-version 0.3.0
