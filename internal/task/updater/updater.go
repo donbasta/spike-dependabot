@@ -25,7 +25,7 @@ func UpdateProjectDependencies(dependencyUpdates []types.ProjectDependencies) {
 
 	gormDB, err := db.ProvideDB(mainConfig)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	packageUpdaters := []PackageUpdater{
@@ -59,7 +59,7 @@ func UpdateProjectDependencies(dependencyUpdates []types.ProjectDependencies) {
 				branchName := mergeRequest.SourceBranch
 				_, deleteBranchError := client.Branches.DeleteBranch(id.Get(), branchName)
 				if deleteBranchError != nil {
-					zlog.Fatal("Branch cannot be deleted, aborted")
+					zlog.Info("Branch cannot be deleted, aborted")
 					continue
 				}
 

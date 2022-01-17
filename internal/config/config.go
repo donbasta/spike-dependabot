@@ -45,7 +45,7 @@ var (
 
 const projectDirName = "scp-dependency-manager"
 
-func loadEnv() {
+func loadFromEnvFile() {
 	projectName := regexp.MustCompile(`^(.*` + projectDirName + `)`)
 	currentWorkDirectory, _ := os.Getwd()
 	rootPath := projectName.Find([]byte(currentWorkDirectory))
@@ -53,7 +53,7 @@ func loadEnv() {
 	err := godotenv.Load(string(rootPath) + `/.env`)
 
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Println("Error while loading .env file")
 	}
 }
 
@@ -61,7 +61,7 @@ func load() (*Main, error) {
 	main := Main{}
 	ctx := context.Background()
 
-	loadEnv()
+	loadFromEnvFile()
 
 	err := envconfig.Process(ctx, &main)
 	return &main, err

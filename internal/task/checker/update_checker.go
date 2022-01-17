@@ -3,7 +3,6 @@ package checker
 import (
 	"dependabot/internal/errors"
 	"dependabot/internal/task/types"
-	"log"
 	"strings"
 
 	gl "github.com/xanzy/go-gitlab"
@@ -46,7 +45,6 @@ func CheckMultipleProjectsDependencyUpdate(client *gl.Client, projects []types.P
 			currentDependencyVersion, err = dependencyFetcher[source].GetDependencyNewVersion(dependency.SourceBaseUrl)
 
 			if err != nil {
-				log.Fatalln(err)
 				continue
 			}
 

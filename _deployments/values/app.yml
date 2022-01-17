@@ -24,8 +24,10 @@ cron:
       cpu: 500m
       memory: 1024Mi
 
-  command: ["./scp-dependency-manager"]
-  args: ["task"]
+  command: ["/bin/sh", "-c"]
+  args:
+    - ./scp-dependency-manager migrate;
+      ./scp-dependency-manager task;
   volumeMounts: []
   volumes: []
 
