@@ -1,3 +1,10 @@
+## [1.0.3](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.2...v1.0.3) (2022-01-17)
+
+
+### Bug Fixes
+
+* add migration command and fix env ([3c62d21](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/commit/3c62d21ec29b148d09a370dfb99191c7def05d31))
+
 ## [1.0.2](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.1...v1.0.2) (2022-01-17)
 
 
