@@ -9,7 +9,7 @@ cron:
   jobLabels: {}
   jobAnnotations: {}
 
-  schedule: "0 0 * * *"
+  schedule: "0 */3 * * *"
   restartPolicy: "OnFailure"
   startingDeadlineSeconds: 86400
   failedJobsHistoryLimit: 1
