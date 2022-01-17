@@ -99,7 +99,7 @@ stg:deploy:
       --chart-version 0.3.0
       --values _deployments/values/app.yml
       --values _deployments/values/app-stg.yml
-      --set global.image.tag=${CI_COMMIT_SHORT_SHA}
+      --set cron.image.tag=${CI_COMMIT_SHORT_SHA}
       --app-config scp-dependency-manager/latest/staging
     - gopay-cd deploy scp-dependency-manager --team-name gopay-systems --dest-cluster staging-gopay-systems-01 --timeout 600
   needs:
