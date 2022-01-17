@@ -1,3 +1,12 @@
+## [1.0.2](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.1...v1.0.2) (2022-01-17)
+
+
+### Bug Fixes
+
+* change namespace for app staging deployment ([7ac27ee](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/commit/7ac27eed2946a689c4e1975febd58891b4c1a517))
+* change namespace for app staging deployment ([f23408a](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/commit/f23408a915460407e9d1999b1055f234c374194e))
+* pulled image tag now use commit sha ([01000a2](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/commit/01000a2228730f494da95bb93724490335d191de))
+
 ## [1.0.1](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.0...v1.0.1) (2022-01-17)
 
 
