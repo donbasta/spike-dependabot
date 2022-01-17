@@ -2,7 +2,6 @@ package checker
 
 import (
 	"dependabot/internal/cache"
-	"log"
 	"strings"
 
 	"github.com/gopaytech/go-commons/pkg/gitlab"
@@ -44,9 +43,9 @@ func (g GolabsDependencyVersionFetcher) GetDependencyNewVersion(dependencyUrl st
 	} else {
 		latestRelease, err := g.getProjectLatestRelease(dependencyUrl)
 		if err != nil {
-			log.Fatalln(err)
 			return "", err
 		}
+
 		if latestRelease != nil {
 			newVersion = latestRelease.TagName
 			c.Set(dependencyUrl, newVersion, 0)
