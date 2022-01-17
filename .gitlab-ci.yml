@@ -11,6 +11,8 @@ stages:
   - unit-test
   - pre-release
   - release
+  - artefact-build
+  - staging-deploy
 
 unit-test:
   image: golang:1.16
@@ -55,3 +57,54 @@ release:
     - master
   tags:
     - i-go-gp-docker
+
+artefact-build:package:
+  image: asia.gcr.io/gopay-systems/cx-gopay-packager:latest
+  stage: artefact-build
+  services:
+    - docker:19.03.1-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - packager
+  tags:
+    - i-go-gp-docker
+
+release:binary:
+  image:
+    name: goreleaser/goreleaser
+    entrypoint: [ '' ]
+  variables:
+    GOPRIVATE: source.golabs.io
+  stage: artefact-build
+  before_script:
+    - echo $GITCONFIG | base64 -d > ~/.gitconfig
+  script:
+    - goreleaser release --rm-dist
+  only:
+    - tags
+  tags:
+    - i-go-gp-docker
+
+stg:deploy:
+  image: asia.gcr.io/gopay-systems/gopay-cd:latest
+  stage: "staging-deploy"
+  script:
+    - gopay-cd render scp-dependency-manager
+      --dest-cluster staging-gopay-systems-01
+      --namespace scp
+      --team-name gopay-systems
+      --chart-name chartmuseum-incubator/gopay-cron
+      --chart-version 0.3.0
+      --values _deployments/values/app.yml
+      --values _deployments/values/app-stg.yml
+      --set global.image.tag=${CI_COMMIT_SHORT_SHA}
+      --app-config scp-dependency-manager/latest/staging
+    - gopay-cd deploy scp-dependency-manager --team-name gopay-systems --dest-cluster staging-gopay-systems-01 --timeout 600
+  needs:
+    - artefact-build:package
+  tags:
+    - i-go-gp-docker
+  only:
+    - master

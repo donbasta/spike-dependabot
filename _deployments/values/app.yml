@@ -1,0 +1,34 @@
+nameOverride: "scp-dependency-manager"
+
+cron:
+  image:
+    name: asia.gcr.io/gopay-systems/scp-dependency-manager
+    tag: latest
+
+  annotations: {}
+  jobLabels: {}
+  jobAnnotations: {}
+
+  schedule: "0 0 * * *"
+  restartPolicy: "OnFailure"
+  startingDeadlineSeconds: 86400
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+
+  resources:
+    limits:
+      cpu: 1
+      memory: 4096Mi
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+
+  command: ["./scp-dependency-manager"]
+  args: ["task"]
+  volumeMounts: []
+  volumes: []
+
+configmap:
+  annotations: {}
+  data: {}

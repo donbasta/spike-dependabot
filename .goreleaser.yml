@@ -1,0 +1,33 @@
+before:
+  hooks:
+    - go mod tidy -compat=1.17
+    - go mod vendor
+builds:
+  - id: scp-dependency-manager
+    main: ./main.go
+    binary: ./scp-dependency-manager
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+release:
+  gitlab:
+    owner: cloud-platform/automation
+    name: scp-dependency-manager
+gitlab_urls:
+  api: https://source.golabs.io/api/v4/
+  download: https://source.golabs.io
+  skip_tls_verify: false
+checksum:
+  name_template: 'checksums.txt'
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'

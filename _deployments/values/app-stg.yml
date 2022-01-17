@@ -1,0 +1,3 @@
+configmap:
+  data:
+    ENVIRONMENT: staging
