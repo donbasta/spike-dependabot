@@ -1,3 +1,6 @@
 configmap:
   data:
     ENVIRONMENT: staging
+
+cron:
+  schedule: "0 */3 * * *"

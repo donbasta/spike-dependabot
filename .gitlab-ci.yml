@@ -13,6 +13,7 @@ stages:
   - release
   - artefact-build
   - staging-deploy
+  - production-deploy
 
 unit-test:
   image: golang:1.16
@@ -130,5 +131,28 @@ stg:deploy:
     - artefact-build:package
   tags:
     - i-go-gp-docker
+  only:
+    - master
+
+production:deploy:
+  image: asia.gcr.io/gopay-systems/gopay-cd:latest
+  stage: "production-deploy"
+  script:
+    - gopay-cd render scp-dependency-manager
+      --dest-cluster internal-gopay-systems-01
+      --namespace scp
+      --team-name gopay-systems
+      --chart-name chartmuseum-incubator/gopay-cron
+      --chart-version 0.3.0
+      --values _deployments/values/app.yml
+      --values _deployments/values/app-prod.yml
+      --set cron.image.tag=${CI_COMMIT_SHORT_SHA}
+      --app-config scp-dependency-manager/latest/production
+    - gopay-cd deploy scp-dependency-manager --team-name gopay-systems --dest-cluster internal-gopay-systems-01 --timeout 600
+  needs:
+    - artefact-build:package
+  tags:
+    - i-go-gp-docker
+  when: manual
   only:
     - master

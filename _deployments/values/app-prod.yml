@@ -1,0 +1,6 @@
+configmap:
+  data:
+    ENVIRONMENT: production
+
+cron:
+  schedule: "0 0 * * *"
