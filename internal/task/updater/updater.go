@@ -25,7 +25,7 @@ func UpdateProjectDependencies(dependencyUpdates []types.ProjectDependencies) {
 
 	gormDB, err := db.ProvideDB(mainConfig)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 
 	packageUpdaters := []PackageUpdater{
@@ -70,12 +70,14 @@ func UpdateProjectDependencies(dependencyUpdates []types.ProjectDependencies) {
 		for i := range packageUpdaters {
 			err = packageUpdaters[i].ProcessUpdateProjectDependencies(&dependencyUpdate, &slackNotificationService, &mergeRequestService)
 			if err != nil {
-				log.Printf("[%s] Update error status: %s\n", dependencyUpdate.Project.Name, err)
+				zlog.Info("[%s/%s] Update error status: %s\n", packageUpdaters[i].GetPackageManagerName(), dependencyUpdate.Project.Name, err)
 			}
 		}
+
+		zlog.Info("Completed bumping dependencies in project %s...", dependencyUpdate.Project.Name)
 	}
 
-	zlog.Info("Completed updating all the dependencies in the repo")
+	zlog.Info("Completed updating all the dependencies in the watched groups...")
 }
 
 func cloneRepoAndCommitChanges(

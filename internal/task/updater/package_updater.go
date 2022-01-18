@@ -6,6 +6,7 @@ import (
 )
 
 type PackageUpdater interface {
+	GetPackageManagerName() string
 	IsPackageDependencyRequirementFile(filepath string) bool
 	ProcessUpdateProjectDependencies(c *types.ProjectDependencies, s *service.SlackNotificationService, m *service.MergeRequestService) error
 	updateContentWithNewDependency(fileContent string, dependency types.Dependency) string

@@ -5,17 +5,12 @@ import (
 	"regexp"
 	"strings"
 
+	packageManager "dependabot/internal/task/types/package_manager"
+
 	"gopkg.in/yaml.v2"
 )
 
 type ansibleParser struct {
-}
-
-type AnsibleDependency struct {
-	Name    string `yaml:"name,omitempty"`
-	Src     string `yaml:"src,omitempty"`
-	Version string `yaml:"version,omitempty"`
-	Scm     string `yaml:"scm,omitempty"`
 }
 
 func CreateAnsibleParser() *ansibleParser {
@@ -37,7 +32,7 @@ func (an *ansibleParser) GetBaseUrlFromRawSource(raw string) (string, error) {
 func (an *ansibleParser) ParseRequirementFile(fileContent string) ([]types.Dependency, error) {
 	byteContent := []byte(fileContent)
 
-	var ansibleDependencies []AnsibleDependency
+	var ansibleDependencies []packageManager.AnsibleDependency
 	yaml.Unmarshal(byteContent, &ansibleDependencies)
 
 	dependencies := []types.Dependency{}

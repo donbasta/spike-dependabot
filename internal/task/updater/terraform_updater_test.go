@@ -47,7 +47,7 @@ func TestTerraformUpdateFile(t *testing.T) {
 	assert.Equal(t, expectedNewFile, updatedOldFile)
 }
 
-func TestTerraformPackageName(t *testing.T) {
+func TestTerraformPackageRequirementFileName(t *testing.T) {
 	updater := CreateTerraformUpdater()
 
 	path := "/example/main.tf"
@@ -55,4 +55,10 @@ func TestTerraformPackageName(t *testing.T) {
 
 	path = "/proj/dummy/template-scp/terraform/main.tf"
 	assert.True(t, updater.IsPackageDependencyRequirementFile(path))
+}
+
+func TestTerraformPackageName(t *testing.T) {
+	updater := CreateTerraformUpdater()
+
+	assert.Equal(t, "terraform", updater.GetPackageManagerName())
 }

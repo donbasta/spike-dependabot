@@ -41,10 +41,14 @@ func (a *AnsibleUpdater) IsPackageDependencyRequirementFile(filepath string) boo
 	return a.Manager.IsPackageDependencyRequirementFile(filepath)
 }
 
+func (a *AnsibleUpdater) GetPackageManagerName() string {
+	return a.Manager.GetPackageManagerName()
+}
+
 func (a *AnsibleUpdater) ProcessUpdateProjectDependencies(c *types.ProjectDependencies, s *service.SlackNotificationService, m *service.MergeRequestService) error {
 	dt := time.Now()
-	gitWorkingBranchName := fmt.Sprintf("scp-dependency-manager-bump/%s/%s", a.Manager.GetPackageName(), dt.Format("01-02-2006"))
-	mergeRequestTitle := fmt.Sprintf("fix: bump %s dependencies (%s)", a.Manager.GetPackageName(), dt.Format("01-02-2006"))
+	gitWorkingBranchName := fmt.Sprintf("scp-dependency-manager-bump/%s/%s", a.Manager.GetPackageManagerName(), dt.Format("01-02-2006"))
+	mergeRequestTitle := fmt.Sprintf("fix: bump %s dependencies (%s)", a.Manager.GetPackageManagerName(), dt.Format("01-02-2006"))
 
 	err := a.updateProjectDependencyAndCommitChanges(c, gitWorkingBranchName, mergeRequestTitle)
 	if err != nil {
@@ -77,7 +81,7 @@ func (a *AnsibleUpdater) ProcessUpdateProjectDependencies(c *types.ProjectDepend
 	}
 
 	mainCfg := config.ProvideConfig()
-	err = (*s).NotifyMerge(mainCfg.Slack.ChannelId, mergeRequestURL, c.Project.Name, a.Manager.GetPackageName())
+	err = (*s).NotifyMerge(mainCfg.Slack.ChannelId, mergeRequestURL, c.Project.Name, a.Manager.GetPackageManagerName())
 	if err != nil {
 		return err
 	}
@@ -87,7 +91,7 @@ func (a *AnsibleUpdater) ProcessUpdateProjectDependencies(c *types.ProjectDepend
 
 func (a *AnsibleUpdater) updateContentWithNewDependency(fileContent string, dependency types.Dependency) string {
 	byteContent := []byte(fileContent)
-	var ansibleDependencies []parser.AnsibleDependency
+	var ansibleDependencies []packageManager.AnsibleDependency
 	yaml.Unmarshal(byteContent, &ansibleDependencies)
 
 	for i := range ansibleDependencies {
@@ -103,7 +107,7 @@ func (a *AnsibleUpdater) updateContentWithNewDependency(fileContent string, depe
 func (a *AnsibleUpdater) updateProjectDependencyAndCommitChanges(c *types.ProjectDependencies, gitWorkingBranchName string, commitMessage string) error {
 	countAnsibleDependencyUpdates := 0
 	for _, dependencyUpdate := range c.Dependencies {
-		if dependencyUpdate.Type == a.Manager.GetPackageName() {
+		if dependencyUpdate.Type == a.Manager.GetPackageManagerName() {
 			countAnsibleDependencyUpdates += 1
 		}
 	}

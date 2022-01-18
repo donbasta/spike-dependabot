@@ -50,7 +50,7 @@ func TestAnsibleUpdateFile(t *testing.T) {
 	assert.Equal(t, expectedNewFile, updatedOldFile)
 }
 
-func TestAnsiblePackageName(t *testing.T) {
+func TestAnsiblePackageRequirementFileName(t *testing.T) {
 	updater := CreateAnsibleUpdater()
 
 	path := "/main/requirements.yml"
@@ -58,4 +58,10 @@ func TestAnsiblePackageName(t *testing.T) {
 
 	path = "/proj/dummy/template-scp/ansible/inventories.yml"
 	assert.False(t, updater.IsPackageDependencyRequirementFile(path))
+}
+
+func TestAnsiblePackageName(t *testing.T) {
+	updater := CreateAnsibleUpdater()
+
+	assert.Equal(t, "ansible", updater.GetPackageManagerName())
 }

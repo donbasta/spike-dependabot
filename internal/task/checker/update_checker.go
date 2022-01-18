@@ -5,6 +5,7 @@ import (
 	"dependabot/internal/task/types"
 	"strings"
 
+	"github.com/gopaytech/go-commons/pkg/zlog"
 	gl "github.com/xanzy/go-gitlab"
 )
 
@@ -50,7 +51,12 @@ func CheckMultipleProjectsDependencyUpdate(client *gl.Client, projects []types.P
 
 			projectDependencyVersion := dependency.Version.String()
 			if currentDependencyVersion != projectDependencyVersion && projectDependencyVersion != "latest" {
-				v, _ := types.MakeVersion(currentDependencyVersion)
+				v, err := types.MakeVersion(currentDependencyVersion)
+				if err != nil {
+					zlog.Info("Unsupported version format (%s) of dependency %s in repo %s\n", currentDependencyVersion, dependency.SourceBaseUrl, project.Project.Name)
+					continue
+				}
+
 				dependencyUpdate := types.Dependency{
 					SourceRaw:     dependency.SourceRaw,
 					SourceBaseUrl: dependency.SourceBaseUrl,
