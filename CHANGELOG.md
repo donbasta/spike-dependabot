@@ -1,3 +1,10 @@
+## [1.0.6](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.5...v1.0.6) (2022-01-18)
+
+
+### Bug Fixes
+
+* refactor log and test job using production groups ([94dadd7](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/commit/94dadd7f9a09fd09ffda4dd6b92135324a6108f6))
+
 ## [1.0.5](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.4...v1.0.5) (2022-01-18)
 
 
