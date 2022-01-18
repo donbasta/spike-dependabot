@@ -20,5 +20,5 @@ func TestTerraformDependencyFilePath(t *testing.T) {
 
 func TestTerraformPackageName(t *testing.T) {
 	manager := CreateTerraformPackageManager()
-	assert.Equal(t, "terraform", manager.GetPackageName())
+	assert.Equal(t, "terraform", manager.GetPackageManagerName())
 }

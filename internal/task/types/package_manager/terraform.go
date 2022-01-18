@@ -11,7 +11,7 @@ func (t *terraformPackageManager) IsPackageDependencyRequirementFile(path string
 	return (fileName == "main.tf" || fileName == "main.tf.tmpl") && (fileDir != "examples") && (fileDir != "example")
 }
 
-func (t *terraformPackageManager) GetPackageName() string {
+func (t *terraformPackageManager) GetPackageManagerName() string {
 	return "terraform"
 }
 

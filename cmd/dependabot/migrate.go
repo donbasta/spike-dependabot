@@ -42,10 +42,12 @@ func newMigrate() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			err = migration.Up()
 			if err != nil {
 				zlog.Error(err, "migrate up fail")
 			}
+
 			zlog.Info("migration finished")
 			return nil
 		},

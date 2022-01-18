@@ -24,5 +24,5 @@ func TestAnsibleDependencyFilePath(t *testing.T) {
 
 func TestAnsiblePackageName(t *testing.T) {
 	manager := CreateAnsiblePackageManager()
-	assert.Equal(t, "ansible", manager.GetPackageName())
+	assert.Equal(t, "ansible", manager.GetPackageManagerName())
 }

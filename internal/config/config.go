@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/gopaytech/go-commons/pkg/atom"
+	"github.com/gopaytech/go-commons/pkg/zlog"
 	"github.com/joho/godotenv"
 	"github.com/sethvargo/go-envconfig"
 )
@@ -58,7 +59,7 @@ func loadFromEnvFile() {
 	err := godotenv.Load(string(rootPath) + `/.env`)
 
 	if err != nil {
-		log.Println("Error while loading .env file")
+		zlog.Info("Error while loading .env file")
 	}
 }
 

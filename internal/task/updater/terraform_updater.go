@@ -41,10 +41,14 @@ func (tf *TerraformUpdater) IsPackageDependencyRequirementFile(filepath string) 
 	return tf.Manager.IsPackageDependencyRequirementFile(filepath)
 }
 
+func (tf *TerraformUpdater) GetPackageManagerName() string {
+	return tf.Manager.GetPackageManagerName()
+}
+
 func (tf *TerraformUpdater) ProcessUpdateProjectDependencies(c *types.ProjectDependencies, s *service.SlackNotificationService, m *service.MergeRequestService) error {
 	dt := time.Now()
-	gitWorkingBranchName := fmt.Sprintf("scp-dependency-manager-bump/%s/%s", tf.Manager.GetPackageName(), dt.Format("01-02-2006"))
-	mergeRequestTitle := fmt.Sprintf("fix: bump %s dependencies (%s)", tf.Manager.GetPackageName(), dt.Format("01-02-2006"))
+	gitWorkingBranchName := fmt.Sprintf("scp-dependency-manager-bump/%s/%s", tf.Manager.GetPackageManagerName(), dt.Format("01-02-2006"))
+	mergeRequestTitle := fmt.Sprintf("fix: bump %s dependencies (%s)", tf.Manager.GetPackageManagerName(), dt.Format("01-02-2006"))
 
 	err := tf.updateProjectDependencyAndCommitChanges(c, gitWorkingBranchName, mergeRequestTitle)
 	if err != nil {
@@ -77,7 +81,7 @@ func (tf *TerraformUpdater) ProcessUpdateProjectDependencies(c *types.ProjectDep
 	}
 
 	mainCfg := config.ProvideConfig()
-	err = (*s).NotifyMerge(mainCfg.Slack.ChannelId, mergeRequestURL, c.Project.Name, tf.Manager.GetPackageName())
+	err = (*s).NotifyMerge(mainCfg.Slack.ChannelId, mergeRequestURL, c.Project.Name, tf.Manager.GetPackageManagerName())
 	if err != nil {
 		return err
 	}
@@ -149,10 +153,11 @@ func (tf *TerraformUpdater) updateContentWithNewDependency(fileContent string, d
 func (tf *TerraformUpdater) updateProjectDependencyAndCommitChanges(c *types.ProjectDependencies, gitWorkingBranchName string, commitMessage string) error {
 	countTerraformDependencyUpdates := 0
 	for _, dependencyUpdate := range c.Dependencies {
-		if dependencyUpdate.Type == tf.Manager.GetPackageName() {
+		if dependencyUpdate.Type == tf.Manager.GetPackageManagerName() {
 			countTerraformDependencyUpdates += 1
 		}
 	}
+
 	if countTerraformDependencyUpdates == 0 {
 		return errors.NewOperationError(nil, "No dependency update found")
 	}

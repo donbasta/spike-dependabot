@@ -2,24 +2,25 @@ package helper
 
 import (
 	"dependabot/internal/config"
-	"log"
 	"strconv"
+
+	"github.com/gopaytech/go-commons/pkg/zlog"
 )
 
 func GetDefaultGroupList() []int {
 	mainCfg := config.ProvideConfig()
 	listID := mainCfg.Groups.ListID
 
-	ret := []int{}
+	listIntID := []int{}
 	for _, id := range listID {
-		i, err := strconv.Atoi(id)
+		intId, err := strconv.Atoi(id)
 		if err != nil {
-			log.Println(err)
+			zlog.Info(err.Error())
 			continue
 		}
 
-		ret = append(ret, i)
+		listIntID = append(listIntID, intId)
 	}
 
-	return ret
+	return listIntID
 }
