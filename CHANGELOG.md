@@ -1,3 +1,10 @@
+## [1.0.4](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.3...v1.0.4) (2022-01-18)
+
+
+### Bug Fixes
+
+* data race issue in CrawlMultipleGroups ([3aab090](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/commit/3aab090003dc4b51a64c31a5dc9e8a1004519250))
+
 ## [1.0.3](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.2...v1.0.3) (2022-01-17)
 
 
