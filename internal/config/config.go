@@ -16,6 +16,7 @@ type Main struct {
 	Database Database
 	Git      Git
 	Slack    Slack
+	Groups   Groups
 }
 
 type Git struct {
@@ -36,6 +37,10 @@ type Database struct {
 type Slack struct {
 	Token     string `env:"SLACK_TOKEN"`
 	ChannelId string `env:"SLACK_CHANNEL_ID"`
+}
+
+type Groups struct {
+	ListID []string `env:"LIST_GROUP_ID"`
 }
 
 var (
