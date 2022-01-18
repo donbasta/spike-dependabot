@@ -1,3 +1,10 @@
+## [1.0.5](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.4...v1.0.5) (2022-01-18)
+
+
+### Bug Fixes
+
+* add groups ID list to env ([f625a63](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/commit/f625a638847ee585744918a08d9407418724f8b5))
+
 ## [1.0.4](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.3...v1.0.4) (2022-01-18)
 
 
