@@ -26,21 +26,20 @@ func CrawlMultipleGroups(client *gl.Client, groupIds []int) ([]types.ProjectDepe
 			return nil, err
 		}
 
-		ch := make(chan struct{}, len(projects))
+		ch := make(chan types.ProjectDependencies)
 
 		for _, project := range projects {
-			go func(p *gl.Project) {
+			go func(p *gl.Project, c chan<- types.ProjectDependencies) {
 				dependencies, _ := CrawlProjectFilesAndGetDependencies(client, p)
-				crawledProjects = append(crawledProjects, types.ProjectDependencies{
+				c <- types.ProjectDependencies{
 					Project:      p,
 					Dependencies: dependencies,
-				})
-				ch <- struct{}{}
-			}(project)
+				}
+			}(project, ch)
 		}
 
 		for range projects {
-			<-ch
+			crawledProjects = append(crawledProjects, <-ch)
 		}
 	}
 

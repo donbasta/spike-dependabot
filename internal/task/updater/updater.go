@@ -70,7 +70,7 @@ func UpdateProjectDependencies(dependencyUpdates []types.ProjectDependencies) {
 		for i := range packageUpdaters {
 			err = packageUpdaters[i].ProcessUpdateProjectDependencies(&dependencyUpdate, &slackNotificationService, &mergeRequestService)
 			if err != nil {
-				log.Printf("Update error status: %s\n", err)
+				log.Printf("[%s] Update error status: %s\n", dependencyUpdate.Project.Name, err)
 			}
 		}
 	}
