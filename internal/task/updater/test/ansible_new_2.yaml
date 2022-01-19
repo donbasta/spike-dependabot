@@ -1,0 +1,11 @@
+- src: https://source.golabs.io/gopay_infra/ansible/playbooks/redis-playbook.git
+  version: v1.2.9
+  name: redis-playbook
+
+- src: https://source.golabs.io/gopay_infra/ansible/playbooks/scp-playbook.git
+  version: v1.0.4
+  name: scp-playbook
+
+- name: rabbitmq-exporter
+  src: git@source.golabs.io:farras.f.interns/rabbitmq-exporter.git
+  scm: git

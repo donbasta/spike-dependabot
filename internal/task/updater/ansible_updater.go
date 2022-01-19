@@ -11,6 +11,7 @@ import (
 	packageManager "dependabot/internal/task/types/package_manager"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gopaytech/go-commons/pkg/git"
@@ -100,8 +101,74 @@ func (a *AnsibleUpdater) updateContentWithNewDependency(fileContent string, depe
 		}
 	}
 
+	appendDashes := false
+	var attrOrders [][]string
+	buffer := []string{}
+	linesOriginalContent := strings.Split(fileContent, "\n")
+	for _, line := range linesOriginalContent {
+		if line == "---" {
+			appendDashes = true
+			continue
+		}
+		line = strings.TrimSpace(line)
+		if len(line) == 0 {
+			continue
+		}
+		if strings.HasPrefix(line, "- ") && len(buffer) > 0 {
+			attrOrders = append(attrOrders, buffer)
+			buffer = []string{}
+		}
+
+		line = strings.TrimLeft(line, "- ")
+		tokens := strings.Split(line, ":")
+		if len(tokens) == 0 {
+			continue
+		}
+		buffer = append(buffer, tokens[0])
+	}
+	attrOrders = append(attrOrders, buffer)
+
 	updatedByteContent, _ := yaml.Marshal(ansibleDependencies)
-	return string(updatedByteContent)
+	updatedContent := string(updatedByteContent)
+	lines := strings.Split(updatedContent, "\n")
+	linesUpdatedContentNew := []string{}
+
+	dependencyIdx := 0
+	for i, line := range lines {
+		if strings.HasPrefix(line, "- ") {
+			buffer = []string{}
+			orderedBuffer := []string{}
+			buffer = append(buffer, strings.TrimLeft(line, "- "))
+			j := i + 1
+			for j < len(lines) && !strings.HasPrefix(lines[j], "- ") {
+				buffer = append(buffer, strings.TrimSpace(lines[j]))
+				j += 1
+			}
+			for _, attr := range attrOrders[dependencyIdx] {
+				for _, b := range buffer {
+					bb := strings.TrimLeft(b, "- ")
+					bb = strings.TrimSpace(bb)
+					if strings.HasPrefix(bb, attr) {
+						indent := "  "
+						if len(orderedBuffer) == 0 {
+							indent = "- "
+						}
+						orderedBuffer = append(orderedBuffer, indent+bb)
+						break
+					}
+				}
+			}
+			orderedBuffer = append(orderedBuffer, "")
+			linesUpdatedContentNew = append(linesUpdatedContentNew, orderedBuffer...)
+			dependencyIdx += 1
+		}
+	}
+
+	if appendDashes {
+		linesUpdatedContentNew = append([]string{"---"}, linesUpdatedContentNew...)
+	}
+	updatedContent = strings.Join(linesUpdatedContentNew, "\n")
+	return updatedContent
 }
 
 func (a *AnsibleUpdater) updateProjectDependencyAndCommitChanges(c *types.ProjectDependencies, gitWorkingBranchName string, commitMessage string) error {
