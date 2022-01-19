@@ -1,10 +1,12 @@
-- src: https://source.golabs.io/gopay_infra/ansible/playbooks/redis-playbook.git
-  version: v1.2.5
-  name: redis-playbook
+---
+- name: prometheus-exporter
+  scm: git
+  src: git@source.golabs.io:gopay_infra/ansible/roles/prometheus-exporter.git
 
-- src: https://source.golabs.io/gopay_infra/ansible/playbooks/scp-playbook.git
-  version: v1.0.2
-  name: scp-playbook
+- src: git@source.golabs.io:farras.f.interns/rabbitmq-role.git
+  name: rabbitmq
+  scm: git
+  version: v1.0.1
 
 - name: rabbitmq-exporter
   src: git@source.golabs.io:farras.f.interns/rabbitmq-exporter.git

@@ -27,6 +27,30 @@ func TestAnsibleUpdateFile(t *testing.T) {
 	oldFileRaw, _ := ioutil.ReadFile("./test/ansible_old.yaml")
 	oldFile := string(oldFileRaw)
 
+	v1, _ := types.MakeVersion("v2.0.0")
+	dependencies := []types.Dependency{
+		{
+			SourceRaw:     "git@source.golabs.io:farras.f.interns/rabbitmq-role.git",
+			SourceBaseUrl: "source.golabs.io/farras.f.interns/rabbitmq-role",
+			Version:       *v1,
+			Type:          "ansible",
+		},
+	}
+
+	updatedOldFile := updater.updateContentWithNewDependency(oldFile, dependencies[0])
+
+	assert.Equal(t, expectedNewFile, updatedOldFile)
+}
+
+func TestAnsibleUpdateFile2(t *testing.T) {
+	updater := CreateAnsibleUpdater()
+
+	expectedNewFileRaw, _ := ioutil.ReadFile("./test/ansible_new_2.yaml")
+	expectedNewFile := string(expectedNewFileRaw)
+
+	oldFileRaw, _ := ioutil.ReadFile("./test/ansible_old_2.yaml")
+	oldFile := string(oldFileRaw)
+
 	v1, _ := types.MakeVersion("v1.2.9")
 	v2, _ := types.MakeVersion("v1.0.4")
 	dependencies := []types.Dependency{
