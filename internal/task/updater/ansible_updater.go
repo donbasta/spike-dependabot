@@ -11,6 +11,7 @@ import (
 	packageManager "dependabot/internal/task/types/package_manager"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gopaytech/go-commons/pkg/git"
@@ -101,7 +102,18 @@ func (a *AnsibleUpdater) updateContentWithNewDependency(fileContent string, depe
 	}
 
 	updatedByteContent, _ := yaml.Marshal(ansibleDependencies)
-	return string(updatedByteContent)
+	updatedContent := string(updatedByteContent)
+	linesUpdatedContent := strings.Split(updatedContent, "\n")
+	buff := []string{}
+	for i, line := range linesUpdatedContent {
+		if strings.HasPrefix(line, "- ") && i != 0 {
+			buff = append(buff, "")
+		}
+		buff = append(buff, line)
+	}
+	updatedContent = strings.Join(buff, "\n")
+
+	return updatedContent
 }
 
 func (a *AnsibleUpdater) updateProjectDependencyAndCommitChanges(c *types.ProjectDependencies, gitWorkingBranchName string, commitMessage string) error {
