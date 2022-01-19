@@ -1,3 +1,10 @@
+## [1.0.7](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.6...v1.0.7) (2022-01-19)
+
+
+### Bug Fixes
+
+* ansible update version only ([9fdff5d](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/commit/9fdff5d14afeb392eba7e46c71ffafbe55311892))
+
 ## [1.0.6](https://source.golabs.io/cloud-platform/automation/scp-dependency-manager/compare/v1.0.5...v1.0.6) (2022-01-18)
 
 
