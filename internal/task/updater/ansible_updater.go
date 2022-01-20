@@ -114,11 +114,13 @@ func (a *AnsibleUpdater) updateContentWithNewDependency(fileContent string, depe
 		if len(line) == 0 {
 			continue
 		}
+		if line[:1] == "#" {
+			continue
+		}
 		if strings.HasPrefix(line, "- ") && len(buffer) > 0 {
 			attrOrders = append(attrOrders, buffer)
 			buffer = []string{}
 		}
-
 		line = strings.TrimLeft(line, "- ")
 		tokens := strings.Split(line, ":")
 		if len(tokens) == 0 {
@@ -146,14 +148,14 @@ func (a *AnsibleUpdater) updateContentWithNewDependency(fileContent string, depe
 			}
 			for _, attr := range attrOrders[dependencyIdx] {
 				for _, b := range buffer {
-					bb := strings.TrimLeft(b, "- ")
-					bb = strings.TrimSpace(bb)
-					if strings.HasPrefix(bb, attr) {
+					b := strings.TrimLeft(b, "- ")
+					b = strings.TrimSpace(b)
+					if strings.HasPrefix(b, attr) {
 						indent := "  "
 						if len(orderedBuffer) == 0 {
 							indent = "- "
 						}
-						orderedBuffer = append(orderedBuffer, indent+bb)
+						orderedBuffer = append(orderedBuffer, indent+b)
 						break
 					}
 				}
