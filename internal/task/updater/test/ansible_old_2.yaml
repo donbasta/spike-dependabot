@@ -1,3 +1,4 @@
+# comment, from ansible repo gopay_infra
 - src: https://source.golabs.io/gopay_infra/ansible/playbooks/redis-playbook.git
   version: v1.2.5
   name: redis-playbook
@@ -5,6 +6,8 @@
 - src: https://source.golabs.io/gopay_infra/ansible/playbooks/scp-playbook.git
   version: v1.0.2
   name: scp-playbook
+
+# another comment for test
 
 - name: rabbitmq-exporter
   src: git@source.golabs.io:farras.f.interns/rabbitmq-exporter.git
